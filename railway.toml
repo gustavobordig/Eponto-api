@@ -1,0 +1,11 @@
+# Deploy no Railway: imagem do Dockerfile da raiz (o mesmo de EPonto/Dockerfile)
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# A imagem já inicia com `dotnet EPonto.dll` e escuta na porta 8080 (configure PORT=8080)
+healthcheckPath = "/swagger/index.html"
+healthcheckTimeout = 120
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5

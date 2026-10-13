@@ -1,7 +1,0 @@
-[build]
-builder = "dockerfile"
-dockerfilePath = "./EPonto/Dockerfile"
-
-[deploy]
-startCommand = "dotnet EPonto.dll"
-restartPolicyType = "never"
