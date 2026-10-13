@@ -1,0 +1,24 @@
+﻿using Domain.Enum;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace Domain.Entities.Ponto
+{
+    public class SolicitacaoAjustePontoModel
+    {
+        public int IdSolicitacao { get; set; }
+        public int IdSolicitante { get; set; }
+        public string Justificativa { get; set; }
+        public StatusAlteracaoPonto StatusSolicitacao { get; set; }
+        // Gravada pelo banco (NOW()) no cadastro; volta na listagem para mostrar quando o pedido foi feito
+        public DateTime DataSolicitacao { get; set; }
+        public DateTime DataRegistroAlteracao { get; set; }
+        public DateTime? DataResposta { get; set; }
+        public DateTime? HoraRegistro { get; set; }
+        public List<ItemAjustePontoModel> Itens { get; set; }
+    }
+}
