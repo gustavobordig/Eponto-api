@@ -35,4 +35,9 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Dados de exemplo restaurados pelo modo demonstração (Demo/RestaurarDemoJob) -->
+    <EmbeddedResource Include="..\db\seed.sql" LogicalName="seed.sql" Link="Demo\seed.sql" />
+  </ItemGroup>
+
 </Project>

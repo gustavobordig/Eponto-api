@@ -5,6 +5,8 @@ using Domain.Entities;
 using Application.Interfaces;
 using Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using EPonto.Demo;
+using Microsoft.Extensions.Options;
 
 namespace EPonto.Controllers
 {
@@ -13,11 +15,20 @@ namespace EPonto.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly ModoDemoOptions _demo;
 
-        public UsuarioController(IUsuarioService usuarioService)
+        public UsuarioController(IUsuarioService usuarioService, IOptions<ModoDemoOptions> demo)
         {
             _usuarioService = usuarioService;
+            _demo = demo.Value;
         }
+
+        /// <summary>Contas divulgadas para teste não são editadas nem desativadas por quem as usa.</summary>
+        private async Task<bool> EhContaDemo(int id) =>
+            _demo.Ativo && _demo.EhContaDemo((await _usuarioService.ObterUsuarioPorIdAsync(id)).Usuario?.Email);
+
+        private ObjectResult ContaDemoProtegida() =>
+            StatusCode(StatusCodes.Status403Forbidden, new { Sucesso = false, Mensagem = ModoDemo.MensagemContaProtegida });
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -86,6 +97,7 @@ namespace EPonto.Controllers
             }
 
             usuario.IdUsuario = id;
+            if (await EhContaDemo(id)) return ContaDemoProtegida();
 
             // Quem não é admin edita os próprios dados, mas não o cargo nem a jornada
             if (!User.EhAdmin())
@@ -108,6 +120,7 @@ namespace EPonto.Controllers
         [HttpPut("Deletar/{id}")]
         public async Task<IActionResult> ExcluirUsuario(int id)
         {
+            if (await EhContaDemo(id)) return ContaDemoProtegida();
             var resultado = await _usuarioService.ExcluirUsuarioAsync(id);
             if (resultado.Sucesso)
                 return Ok(resultado);

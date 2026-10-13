@@ -19,6 +19,8 @@ using System.Reflection;
 using Swashbuckle.AspNetCore.Filters;
 using Domain.Entities.Feriado_e_Ferias;
 using System.Security.Claims;
+using EPonto.Demo;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -161,6 +163,21 @@ builder.Services.AddHangfireServer();
 // Adicione o serviço do job
 builder.Services.AddScoped<BancoHorasJob>();
 
+// Modo demonstração (Demo__Ativo=true no deploy público): limites de gravação,
+// contas de teste protegidas e restauração diária dos dados de exemplo
+builder.Services.Configure<ModoDemoOptions>(builder.Configuration.GetSection("Demo"));
+builder.Services.AddScoped<RestaurarDemoJob>();
+builder.Services.AddLimitesDemo();
+
+// Atrás do proxy do Railway: o IP do cliente é o último valor do X-Forwarded-For
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 
 builder.Services.AddSingleton(sp =>
@@ -241,6 +258,8 @@ builder.Services.Configure<JwtSettingsModel>(builder.Configuration.GetSection("J
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+
 // Sempre habilita o Swagger (tanto em DEV quanto em produção)
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -257,15 +276,33 @@ app.UseCors("PermitirTudo");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Depois da autenticação: o limite por usuário lê o id do token
+app.UseRateLimiter();
+app.UseProtecoesDemo();
+
 app.MapControllers();
 
 app.UseHangfireDashboard(); // Se quiser dashboard do Hangfire
 
-// Agendamento de job com Hangfire
+// Agendamento de job com Hangfire. Sem o fuso, o Hangfire usa UTC e o
+// "20:30" rodava às 17:30 de Brasília.
+var fusoBrasilia = new RecurringJobOptions { TimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo") };
 RecurringJob.AddOrUpdate<BancoHorasJob>(
     "processar-banco-horas-diario",
     job => job.ExecutarProcessamentoDiario(),
-    "30 20 * * *" // Cron: todo dia às 20:30
+    "30 20 * * *", // Cron: todo dia às 20:30
+    fusoBrasilia
 );
+
+var modoDemo = app.Services.GetRequiredService<IOptions<ModoDemoOptions>>().Value;
+if (modoDemo.Ativo)
+{
+    RecurringJob.AddOrUpdate<RestaurarDemoJob>("restaurar-demonstracao", job => job.Restaurar(), modoDemo.CronRestauracao, fusoBrasilia);
+    BackgroundJob.Enqueue<RestaurarDemoJob>(job => job.RestaurarSeVazio());
+}
+else
+{
+    RecurringJob.RemoveIfExists("restaurar-demonstracao");
+}
 
 app.Run();

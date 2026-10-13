@@ -1,7 +1,9 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities.Login;
+using EPonto.Demo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace EPonto.Controllers
 {
@@ -10,10 +12,16 @@ namespace EPonto.Controllers
     public class LoginController : ControllerBase
     {
         private readonly ILoginService _loginService;
-        public LoginController(ILoginService loginService)
+        private readonly ModoDemoOptions _demo;
+        public LoginController(ILoginService loginService, IOptions<ModoDemoOptions> demo)
         {
             _loginService = loginService;
+            _demo = demo.Value;
         }
+
+        /// <summary>As contas de demonstração não trocam de senha: senão, quem chegasse depois não entraria.</summary>
+        private ObjectResult ContaDemoProtegida() =>
+            StatusCode(StatusCodes.Status403Forbidden, new { Sucesso = false, Mensagem = ModoDemo.MensagemContaProtegida });
 
         [HttpPost]
         [Route("RealizarLogin")]
@@ -53,6 +61,7 @@ namespace EPonto.Controllers
         [Route("RecuperarSenha")]
         public async Task<ActionResult<bool>> RecuperarSenha(RecuperacaoSenhaModel param)
         {
+            if (_demo.EhContaDemo(param.email)) return ContaDemoProtegida();
             try
             {
                 bool auxBool = await _loginService.RecuperarSenha(param.email);
@@ -70,6 +79,7 @@ namespace EPonto.Controllers
         [Route("ValidaCodigoRecuperacao")]
         public async Task<ActionResult<bool>> ValidaCodigoRecuperacao(ValidaCodigoRecuperacaoModel param)
         {
+            if (_demo.EhContaDemo(param.email)) return ContaDemoProtegida();
             try
             {
                 bool auxResult = await _loginService.ValidaCodigoRecuperacao(param.codigo, param.email);
@@ -87,6 +97,7 @@ namespace EPonto.Controllers
         [Route("AlteraSenhaLogin")]
         public async Task<ActionResult<bool>> AlteraSenhaLogin(AlteraSenhaLoginModel param)
         {
+            if (_demo.EhContaDemo(param.email)) return ContaDemoProtegida();
             try
             {
                 bool auxResult = await _loginService.AlteraSenhaLogin(param.senha, param.email, param.codigo);
