@@ -26,7 +26,7 @@ namespace Data.Repositories
         #region metodos
         public async Task<IEnumerable<SolicitacaoAusenciaModel>> ListarTodosAsync()
         {
-            string sql = @"SELECT ID_SOLICITACAO_AUSENCIA, ID_USUARIO, LINK_ARQUIVO, MENSAGEM_SOLICITACAO,DATA_INICIO_AUSENCIA,DATA_FIM_AUSENCIA,DATA_SOLICITACAO,STATUS_SOLICITACAO
+            string sql = @"SELECT ID_SOLICITACAO_AUSENCIA, ID_USUARIO, LINK_ARQUIVO, MENSAGEM_SOLICITACAO,DATA_INICIO_AUSENCIA,DATA_FIM_AUSENCIA,DATA_SOLICITACAO,STATUS_SOLICITACAO,OBSERVACAO_RESPOSTA
                    FROM SOLICITACAO_AUSENCIA;";
             return await _dbSession.Connection.QueryAsync<SolicitacaoAusenciaModel>(sql);
         }
@@ -35,7 +35,7 @@ namespace Data.Repositories
         {
             string sql = @"SELECT ID_SOLICITACAO_AUSENCIA, ID_USUARIO, LINK_ARQUIVO, 
                           MENSAGEM_SOLICITACAO, DATA_INICIO_AUSENCIA, DATA_FIM_AUSENCIA, 
-                          DATA_SOLICITACAO, STATUS_SOLICITACAO
+                          DATA_SOLICITACAO, STATUS_SOLICITACAO, OBSERVACAO_RESPOSTA
                    FROM SOLICITACAO_AUSENCIA
                    WHERE ID_SOLICITACAO_AUSENCIA = @IdSolicitacaoAusencia;";
 
@@ -57,7 +57,8 @@ namespace Data.Repositories
                                 DATA_INICIO_AUSENCIA, 
                                 DATA_FIM_AUSENCIA,
 		                        DATA_SOLICITACAO,
-		                        STATUS_SOLICITACAO
+		                        STATUS_SOLICITACAO,
+		                        OBSERVACAO_RESPOSTA
                              FROM SOLICITACAO_AUSENCIA
                              WHERE ID_USUARIO = @IdUsuario;";
 
@@ -108,16 +109,18 @@ namespace Data.Repositories
             int linhasAfetadas = await _dbSession.Connection.ExecuteAsync(sql, new { IdSolicitacaoAusencia = id }, transaction);
             return linhasAfetadas > 0;
         }
-        public async Task<bool> AtualizarStatusAsync(int idSolicitacao, int status, IDbTransaction? transaction = null)
+        public async Task<bool> AtualizarStatusAsync(int idSolicitacao, int status, IDbTransaction? transaction = null, string? observacaoResposta = null)
         {
             string sql = @"UPDATE SOLICITACAO_AUSENCIA 
-                   SET STATUS_SOLICITACAO = @Status
+                   SET STATUS_SOLICITACAO = @Status,
+                       OBSERVACAO_RESPOSTA = @ObservacaoResposta
                    WHERE ID_SOLICITACAO_AUSENCIA = @IdSolicitacao";
 
             int linhasAfetadas = await _dbSession.Connection.ExecuteAsync(sql, new
             {
                 IdSolicitacao = idSolicitacao,
-                Status = status
+                Status = status,
+                ObservacaoResposta = observacaoResposta
             }, transaction);
 
             return linhasAfetadas > 0;

@@ -21,6 +21,6 @@ namespace Application.Interfaces
         Task<SolicitacaoAjusteDTO> ListarSolicitacoesAsync(int? status = null, int? idSolicitante = null);
         Task<SolicitacaoAjusteDTO> CriarSolicitacaoAsync(SolicitacaoAjustePontoModel solicitacao);
         Task<SolicitacaoAjusteDTO> ObterSolicitacaoAltercaoPorIdAsync(int idSolicitacao);
-        Task<SolicitacaoAjusteDTO> AprovarReprovarSolicitacaoAsync(int idSolicitacao, bool aprovado);
+        Task<SolicitacaoAjusteDTO> AprovarReprovarSolicitacaoAsync(int idSolicitacao, bool aprovado, string? comentario = null);
     }
 }

@@ -114,7 +114,7 @@ namespace Data.Repositories
             return idSolicitacao;
         }
 
-        public async Task<bool> AtualizarRegistroAsync(int idSolicitacao, bool aprovar, List<ItemAjustePontoModel> itensAlterados, DateTime dataRegistro, int idUsuario, string localizacao, IDbTransaction transaction)
+        public async Task<bool> AtualizarRegistroAsync(int idSolicitacao, bool aprovar, List<ItemAjustePontoModel> itensAlterados, DateTime dataRegistro, int idUsuario, string localizacao, IDbTransaction transaction, string? observacaoResposta = null)
         {
             try
             {
@@ -123,7 +123,8 @@ namespace Data.Repositories
                     UPDATE SOLICITACAO_AJUSTE_PONTO
                     SET 
                         STATUS_SOLICITACAO = @StatusSolicitacao,
-                        DATA_RESPOSTA = @DataResposta
+                        DATA_RESPOSTA = @DataResposta,
+                        OBSERVACAO_RESPOSTA = @ObservacaoResposta
                     WHERE ID_SOLICITACAO = @IdSolicitacao;";
 
                 var statusSolicitacao = aprovar ? 1 : 2;
@@ -133,6 +134,7 @@ namespace Data.Repositories
                 {
                     StatusSolicitacao = statusSolicitacao,
                     DataResposta = dataResposta,
+                    ObservacaoResposta = observacaoResposta,
                     IdSolicitacao = idSolicitacao
                 }, transaction);
 
@@ -224,6 +226,7 @@ namespace Data.Repositories
                             s.STATUS_SOLICITACAO,
                             s.DATA_SOLICITACAO,
                             s.DATA_RESPOSTA,
+                            s.OBSERVACAO_RESPOSTA,
                             s.ID_SOLICITANTE,
                             s.DATA_REGISTRO_ALTERACAO,
                             s.STATUS_SOLICITACAO,
@@ -278,6 +281,7 @@ namespace Data.Repositories
                             s.STATUS_SOLICITACAO,
                             s.DATA_SOLICITACAO,
                             s.DATA_RESPOSTA,
+                            s.OBSERVACAO_RESPOSTA,
                             s.ID_SOLICITANTE,
                             s.DATA_REGISTRO_ALTERACAO,
                             i.ID_ITEM,

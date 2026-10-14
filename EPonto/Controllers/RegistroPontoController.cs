@@ -151,7 +151,7 @@ namespace EPonto.Controllers
         [Route("ValidarSolicitacao/{idSolicitacao}")]
         public async Task<IActionResult> ValidarSolicitacao(int idSolicitacao, [FromBody] ValidarSolicitacao request)
         {
-            var resultado = await _registroPontoService.AprovarReprovarSolicitacaoAsync(idSolicitacao, request.Aprovado);
+            var resultado = await _registroPontoService.AprovarReprovarSolicitacaoAsync(idSolicitacao, request.Aprovado, request.Comentario);
 
             if (resultado.Sucesso)
                 return Ok(resultado);

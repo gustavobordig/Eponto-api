@@ -16,5 +16,7 @@ namespace Domain.Entities.Feriado_e_Ferias
         public DateTime DatInicioFerias { get; set; }
         public DateTime DatFimFerias { get; set; }
         public DateTime DatSolicitacaoFerias { get; set; }
+        /// <summary>Comentário de quem aprovou ou reprovou (opcional)</summary>
+        public string? ObservacaoResposta { get; set; }
     }
 }

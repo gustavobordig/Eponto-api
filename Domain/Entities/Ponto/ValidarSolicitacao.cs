@@ -9,5 +9,7 @@ namespace Domain.Entities.Ponto
     public class ValidarSolicitacao
     {
         public bool Aprovado { get; set; }
+        /// <summary>Explicação opcional para o funcionário</summary>
+        public string? Comentario { get; set; }
     }
 }

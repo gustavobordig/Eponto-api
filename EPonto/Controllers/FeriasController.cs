@@ -230,11 +230,11 @@ namespace EPonto.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("AtualizaSolicitacaoFerias")]
-        public async Task<ActionResult<ResultadoDTO>> AtualizaSolicitacaoFerias(int? idSolicitacao = null, int? indSituacao = null)
+        public async Task<ActionResult<ResultadoDTO>> AtualizaSolicitacaoFerias(int? idSolicitacao = null, int? indSituacao = null, string? comentario = null)
         {
             try
             {
-                ResultadoDTO auxResult = await _FeriasService.AtualizaSolicitacaoFerias(idSolicitacao, indSituacao);
+                ResultadoDTO auxResult = await _FeriasService.AtualizaSolicitacaoFerias(idSolicitacao, indSituacao, comentario);
                 if (auxResult.Sucesso)
                     return Ok(auxResult);
 

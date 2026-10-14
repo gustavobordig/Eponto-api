@@ -141,6 +141,7 @@ namespace Data.Repositories
                                SF.DAT_INICIO_FERIAS,
                                SF.DAT_FIM_FERIAS,
                                SF.DAT_SOLICITACAO,
+                               SF.OBSERVACAO_RESPOSTA,
                                U.NOME AS NOME_USUARIO
                           FROM SOLICITACAO_FERIAS SF
                           JOIN USUARIO U ON U.ID_USUARIO = SF.ID_USUARIO
@@ -163,6 +164,7 @@ namespace Data.Repositories
                         DatFimFerias = reader["DAT_FIM_FERIAS"].ToDateTime(),
                         DatSolicitacaoFerias = reader["DAT_SOLICITACAO"].ToDateTime(),
                         NomeUsuario = reader["NOME_USUARIO"].ToString(),
+                        ObservacaoResposta = reader["OBSERVACAO_RESPOSTA"] as string,
                         IndSituacao = reader["IND_SITUACAO"].ToInt()
                     });
                 }
@@ -198,16 +200,18 @@ namespace Data.Repositories
                 return lista;
             }
         }
-        public async Task<int> AtualizaSolicitacaoFerias(int idSolicitacao, int indSituacao)
+        public async Task<int> AtualizaSolicitacaoFerias(int idSolicitacao, int indSituacao, string? observacaoResposta = null)
         {
             string sql = @"
                 UPDATE SOLICITACAO_FERIAS SF
-                   SET SF.IND_SITUACAO = @IND_SITUACAO
+                   SET SF.IND_SITUACAO = @IND_SITUACAO,
+                       SF.OBSERVACAO_RESPOSTA = @OBSERVACAO_RESPOSTA
                  WHERE SF.ID_SOLICITACAO_FERIAS = @ID_SOLICITACAO_FERIAS";
 
             object auxParametros = new
             {
                 IND_SITUACAO = indSituacao,
+                OBSERVACAO_RESPOSTA = observacaoResposta,
                 ID_SOLICITACAO_FERIAS = idSolicitacao
             };
 

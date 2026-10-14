@@ -248,8 +248,12 @@ namespace Application.Services
                 };
             }
         }
-        public async Task<SolicitacaoAusenciaDTO> ResponderSolicitacaoAsync(int idSolicitacao, bool aprovar)
+        public async Task<SolicitacaoAusenciaDTO> ResponderSolicitacaoAsync(int idSolicitacao, bool aprovar, string? comentario = null)
         {
+            if (ComentarioResposta.Longo(comentario))
+                return new SolicitacaoAusenciaDTO { Sucesso = false, Mensagem = ComentarioResposta.MensagemLonga };
+            comentario = ComentarioResposta.Normalizar(comentario);
+
             try
             {
                 _dbSession.BeginTransaction();
@@ -270,7 +274,7 @@ namespace Application.Services
 
                 int status = aprovar ? 1 : 2; // 1 = aprovado, 2 = reprovado
 
-                bool atualizado = await _solicitacoAusenciaRepository.AtualizarStatusAsync(idSolicitacao, status, _dbSession.Transaction);
+                bool atualizado = await _solicitacoAusenciaRepository.AtualizarStatusAsync(idSolicitacao, status, _dbSession.Transaction, comentario);
 
                 if (aprovar)
                 {

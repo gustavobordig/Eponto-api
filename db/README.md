@@ -64,3 +64,13 @@ Os pontos e saldos de teste usam datas relativas ao dia em que o banco foi criad
 
 - **Upload de arquivos** (anexo de ausência, foto de perfil): precisa das credenciais do Cloudinary (`Cloudinary__*`).
 - **E-mail de recuperação de senha:** precisa de `Email__Remetente` e `Email__Senha`. Sem eles, `RecuperarSenha` falha. Para testar a troca de senha, consulte o código gerado na tabela `LOGIN` (`COD_RECUPERACAO`).
+
+## Migrações
+
+Mudanças no esquema depois que um banco já foi criado ficam em
+[`db/migracoes/`](migracoes/), em ordem de data. O `schema.sql` já inclui
+todas; rode a migração só em bancos antigos (local ou Railway):
+
+| Arquivo | O que muda |
+|---------|------------|
+| `2026-10-14-observacao-resposta.sql` | Comentário opcional na resposta de ajustes, ausências e férias |

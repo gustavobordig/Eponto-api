@@ -289,8 +289,12 @@ namespace Application.Services
                 };
             }
         }
-        public async Task<SolicitacaoAjusteDTO> AprovarReprovarSolicitacaoAsync(int idSolicitacao, bool aprovado)
+        public async Task<SolicitacaoAjusteDTO> AprovarReprovarSolicitacaoAsync(int idSolicitacao, bool aprovado, string? comentario = null)
         {
+            if (ComentarioResposta.Longo(comentario))
+                return new SolicitacaoAjusteDTO { Sucesso = false, Mensagem = ComentarioResposta.MensagemLonga };
+            comentario = ComentarioResposta.Normalizar(comentario);
+
             try
             {
                 _dbSession.BeginTransaction();
@@ -325,7 +329,8 @@ namespace Application.Services
                         solicitacao.DataRegistroAlteracao,
                         solicitacao.IdSolicitante,
                         localizacao,
-                        _dbSession.Transaction
+                        _dbSession.Transaction,
+                        comentario
                     );
 
                     if (!sucessoAtualizacao)
@@ -353,7 +358,8 @@ namespace Application.Services
                         solicitacao.DataRegistroAlteracao,
                         solicitacao.IdSolicitante,
                         localizacao,
-                        _dbSession.Transaction
+                        _dbSession.Transaction,
+                        comentario
                     );
 
                     if (!sucessoAtualizacao)

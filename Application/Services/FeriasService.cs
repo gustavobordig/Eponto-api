@@ -200,8 +200,12 @@ namespace Application.Services
                 };
             }
         }
-        public async Task<ResultadoDTO> AtualizaSolicitacaoFerias(int? idSolicitacao, int? indSituacao)
+        public async Task<ResultadoDTO> AtualizaSolicitacaoFerias(int? idSolicitacao, int? indSituacao, string? comentario = null)
         {
+            if (ComentarioResposta.Longo(comentario))
+                return new ResultadoDTO { Sucesso = false, Mensagem = ComentarioResposta.MensagemLonga };
+            comentario = ComentarioResposta.Normalizar(comentario);
+
             try
             {
                 if (idSolicitacao == null || idSolicitacao == 0 || indSituacao == null)
@@ -209,7 +213,7 @@ namespace Application.Services
 
                 _dbSession.BeginTransaction();
 
-                await _FeriasRepository.AtualizaSolicitacaoFerias(idSolicitacao.ToInt(), indSituacao.ToInt());
+                await _FeriasRepository.AtualizaSolicitacaoFerias(idSolicitacao.ToInt(), indSituacao.ToInt(), comentario);
 
                 _dbSession.Commit();
                 return new ResultadoDTO

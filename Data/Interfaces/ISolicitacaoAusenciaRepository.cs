@@ -16,6 +16,6 @@ namespace Data.Interfaces
         Task<int> InserirAsync(SolicitacaoAusenciaModel solicitacao);
         Task<bool> AtualizarSolicitacaoAsync(SolicitacaoAusenciaModel solicitacao, IDbTransaction? transaction = null);
         Task<bool> ExcluirSolicitacaoAsync(int id, IDbTransaction? transaction = null);
-        Task<bool> AtualizarStatusAsync(int idSolicitacao, int status, IDbTransaction? transaction = null);
+        Task<bool> AtualizarStatusAsync(int idSolicitacao, int status, IDbTransaction? transaction = null, string? observacaoResposta = null);
     }
 }

@@ -16,6 +16,6 @@ namespace Application.Interfaces
         Task<SolicitacaoAusenciaDTO> CriarSolicitacaoAusenciaAsync(SolicitacaoAusenciaModel solicitacao);
         Task<SolicitacaoAusenciaDTO> AtualizarSolicitacaoAsync(SolicitacaoAusenciaModel solicitacao);
         Task<SolicitacaoAusenciaDTO> ExcluirSolicitacaoAsync(int id);
-        Task<SolicitacaoAusenciaDTO> ResponderSolicitacaoAsync(int idSolicitacao, bool aprovar);
+        Task<SolicitacaoAusenciaDTO> ResponderSolicitacaoAsync(int idSolicitacao, bool aprovar, string? comentario = null);
     }
 }

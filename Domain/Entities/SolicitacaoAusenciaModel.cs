@@ -18,6 +18,8 @@ namespace Domain.Entities
         public DateTime DataFimAusencia { get; set; }
         public DateTime? DataSolicitacao { get; set; }
         public StatusAlteracaoPonto? StatusSolicitacao { get; set; }
+        /// <summary>Comentário de quem aprovou ou reprovou (opcional)</summary>
+        public string? ObservacaoResposta { get; set; }
         public IFormFile Arquivo { get; set; }
     }
 }

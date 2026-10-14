@@ -18,6 +18,8 @@ namespace Domain.Entities.Ponto
         public DateTime DataSolicitacao { get; set; }
         public DateTime DataRegistroAlteracao { get; set; }
         public DateTime? DataResposta { get; set; }
+        /// <summary>Comentário de quem aprovou ou reprovou (opcional)</summary>
+        public string? ObservacaoResposta { get; set; }
         public DateTime? HoraRegistro { get; set; }
         public List<ItemAjustePontoModel> Itens { get; set; }
     }

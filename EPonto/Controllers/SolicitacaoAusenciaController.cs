@@ -157,9 +157,9 @@ namespace EPonto.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("ResponderSolicitacao/{id}")]
-        public async Task<IActionResult> ResponderSolicitacao(int id, [FromQuery] bool aprovar)
+        public async Task<IActionResult> ResponderSolicitacao(int id, [FromQuery] bool aprovar, [FromQuery] string? comentario = null)
         {
-            var resultado = await _solicitacaoAusenciaService.ResponderSolicitacaoAsync(id, aprovar);
+            var resultado = await _solicitacaoAusenciaService.ResponderSolicitacaoAsync(id, aprovar, comentario);
 
             if (resultado.Sucesso)
                 return Ok(resultado);
